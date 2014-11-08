@@ -26,6 +26,7 @@ func getMachines(endpoint string, metadata map[string]string) ([]string, error) 
 	c := &http.Client{
 		Transport: &http.Transport{
 			Dial: dialFunc,
+			DisableKeepAlives: true,
 		},
 	}
 	fleetClient, err := client.NewHTTPClient(c, endpoint)
