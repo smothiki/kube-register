@@ -10,7 +10,7 @@ import (
 	"github.com/coreos/fleet/client"
 )
 
-func getMachines(endpoint string, metadata map[string][]string) ([]string, error) {
+func getMachines(endpoint string) ([]string, error) {
 	dialFunc := net.Dial
 	machineList := make([]string, 0)
 	u, err := url.Parse(endpoint)
@@ -25,7 +25,7 @@ func getMachines(endpoint string, metadata map[string][]string) ([]string, error
 	}
 	c := &http.Client{
 		Transport: &http.Transport{
-			Dial: dialFunc,
+			Dial:              dialFunc,
 			DisableKeepAlives: true,
 		},
 	}
@@ -38,7 +38,7 @@ func getMachines(endpoint string, metadata map[string][]string) ([]string, error
 		return nil, err
 	}
 	for _, m := range machines {
-		if hasMetadata(m, metadata) && isHealthy(m.PublicIP) {
+		if isHealthy(m.PublicIP) {
 			machineList = append(machineList, m.PublicIP)
 		}
 	}

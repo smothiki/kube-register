@@ -13,28 +13,21 @@ import (
 var (
 	apiEndpoint   string
 	fleetEndpoint string
-	metadata      string
 	syncInterval  int
 )
 
 func init() {
 	log.SetFlags(0)
 	flag.StringVar(&apiEndpoint, "api-endpoint", "", "kubernetes API endpoint")
-	flag.StringVar(&fleetEndpoint, "fleet-endpoint", "", "fleet endpoint")
-	flag.StringVar(&metadata, "metadata", "k8s=kubelet", "comma-delimited key/value pairs")
 	flag.IntVar(&syncInterval, "sync-interval", 30, "sync interval")
 }
 
 func main() {
 	flag.Parse()
-	m, err := parseMetadata(metadata)
-	if err != nil {
-		log.Println(err)
-	}
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
 	for {
-		machines, err := getMachines(fleetEndpoint, m)
+		machines, err := getMachines(fleetEndpoint)
 		if err != nil {
 			log.Println(err)
 		}
